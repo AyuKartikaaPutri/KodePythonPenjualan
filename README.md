@@ -1,84 +1,157 @@
-# KodePythonPenjualan
-[python]: Berikut adalah contoh README untuk GitHub yang menjelaskan tentang proyek analisis data menggunakan tiga tabel (produk, pelanggan, dan transaksi). README ini mencakup deskripsi proyek, cara menjalankan kode, dan interpretasi hasil analisis.
+# Proyek Analisis dan Visualisasi Data
 
-Analisis Data Penjualan
-Proyek ini bertujuan untuk melakukan analisis data penjualan menggunakan tiga tabel: produk, pelanggan, dan transaksi. Analisis ini mencakup korelasi dan regresi untuk memahami hubungan antara harga produk dan jumlah transaksi.
+## Deskripsi Proyek
+Proyek ini melibatkan analisis dan visualisasi data pelanggan, produk, dan transaksi menggunakan Python. Data yang digunakan terdiri dari informasi pelanggan, detail produk, dan catatan transaksi. Berbagai visualisasi seperti bar chart, pie chart, line plot, scatter plot, histogram, dan diagram Venn dibuat untuk mendapatkan wawasan dari data tersebut.
 
-Struktur Proyek
-produk.csv: File CSV yang berisi informasi tentang produk.
-pelanggan.csv: File CSV yang berisi informasi tentang pelanggan.
-transaksi.csv: File CSV yang berisi informasi tentang transaksi.
-penjualan.py: Script Python untuk melakukan analisis data dan visualisasi.
-README.md: Dokumentasi proyek.
+## Data
+Proyek ini menggunakan dataset berikut:
 
-Cara Menjalankan Kode
-Pastikan Anda memiliki Python terinstal.
-Instal dependensi yang diperlukan:
-sh
-Copy code
-pip install pandas matplotlib seaborn matplotlib-venn statsmodels scipy
-Pastikan file produk.csv, pelanggan.csv, dan transaksi.csv berada dalam direktori yang sama dengan penjualan.py.
-Jalankan script penjualan.py:
-sh
-Copy code
-python penjualan.py
-Analisis Korelasi
-Script ini menghitung korelasi antara harga produk dan jumlah transaksi. Korelasi Pearson digunakan untuk mengukur hubungan linear antara kedua variabel.
+1. **Pelanggan (`pelanggan.csv`):**
+   - ID Pelanggan
+   - Nama Pelanggan
+   - Kota
 
-python
-Copy code
-from scipy.stats import pearsonr
+2. **Produk (`produk.csv`):**
+   - ID Produk
+   - Nama Produk
+   - Harga
 
-# Menghitung korelasi antara harga produk dan jumlah transaksi
-correlation, p_value = pearsonr(df_merged['Harga'], df_merged['Jumlah'])
+3. **Transaksi (`transaksi.csv`):**
+   - ID Transaksi
+   - ID Pelanggan
+   - ID Produk
+   - Tanggal
+   - Jumlah
 
-print(f"Korelasi antara harga produk dan jumlah transaksi: {correlation}")
-print(f"Nilai p: {p_value}")
-Analisis Regresi
-Script ini juga melakukan analisis regresi untuk melihat pengaruh harga produk terhadap jumlah transaksi.
+## Kebutuhan
+Pastikan Anda memiliki perangkat lunak berikut terinstal:
+- Python 3.x
+- pandas
+- matplotlib
+- seaborn
+- matplotlib-venn
 
-python
-Copy code
-import statsmodels.api as sm
+Anda dapat menginstal pustaka Python yang dibutuhkan dengan menjalankan perintah berikut:
+```bash
+pip install pandas matplotlib seaborn matplotlib-venn
+```
 
-# Variabel independen (X) dan variabel dependen (y)
-X = df_merged['Harga']
-y = df_merged['Jumlah']
+## Cara Penggunaan
+1. **Baca File CSV:**
+    ```python
+    import pandas as pd
 
-# Menambahkan konstanta (intercept) ke model
-X = sm.add_constant(X)
+    df_produk = pd.read_csv('produk.csv')
+    df_pelanggan = pd.read_csv('pelanggan.csv')
+    df_transaksi = pd.read_csv('transaksi.csv')
 
-# Membuat model regresi linear
-model = sm.OLS(y, X).fit()
+    print("DataFrame Produk:")
+    print(df_produk)
+    print("\nDataFrame Pelanggan:")
+    print(df_pelanggan)
+    print("\nDataFrame Transaksi:")
+    print(df_transaksi)
+    ```
 
-# Menampilkan ringkasan hasil regresi
-print(model.summary())
-Visualisasi
-Script ini menghasilkan beberapa visualisasi untuk membantu memahami data dan hasil analisis:
+2. **Visualisasi Harga Produk (Bar Chart):**
+    ```python
+    import matplotlib.pyplot as plt
+    import seaborn as sns
 
-Bar Chart Harga Produk:
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='Nama Produk', y='Harga', data=df_produk)
+    plt.title('Harga Produk')
+    plt.xlabel('Nama Produk')
+    plt.ylabel('Harga')
+    plt.show()
+    ```
 
-Pie Chart Distribusi Kota Pelanggan:
+3. **Visualisasi Distribusi Kota Pelanggan (Pie Chart):**
+    ```python
+    plt.figure(figsize=(8, 8))
+    df_pelanggan['Kota'].value_counts().plot.pie(autopct='%1.1f%%', startangle=90)
+    plt.title('Distribusi Kota Pelanggan')
+    plt.ylabel('')
+    plt.show()
+    ```
 
-Line Plot Jumlah Transaksi per Hari:
+4. **Visualisasi Jumlah Transaksi per Hari (Line Plot):**
+    ```python
+    df_transaksi['Tanggal'] = pd.to_datetime(df_transaksi['Tanggal'])
+    transaksi_per_hari = df_transaksi.groupby('Tanggal').sum()['Jumlah'].reset_index()
 
-Scatter Plot Harga Produk vs Jumlah Transaksi:
+    plt.figure(figsize=(10, 6))
+    sns.lineplot(x='Tanggal', y='Jumlah', data=transaksi_per_hari, marker='o')
+    plt.title('Jumlah Transaksi per Hari')
+    plt.xlabel('Tanggal')
+    plt.ylabel('Jumlah')
+    plt.show()
+    ```
 
-Histogram Harga Produk:
+5. **Scatter Plot Harga Produk vs Jumlah Transaksi:**
+    ```python
+    df_scatter = pd.merge(df_transaksi, df_produk, on='ID Produk')
 
-Venn Diagram:
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(x='Harga', y='Jumlah', hue='Nama Produk', data=df_scatter, s=100)
+    plt.title('Scatter Plot Harga Produk vs Jumlah Transaksi')
+    plt.xlabel('Harga Produk')
+    plt.ylabel('Jumlah Transaksi')
+    plt.show()
+    ```
 
-Pie Chart Distribusi Transaksi per Produk:
+6. **Histogram Harga Produk:**
+    ```python
+    plt.figure(figsize=(10, 6))
+    sns.histplot(df_produk['Harga'], bins=10, kde=True)
+    plt.title('Histogram Harga Produk')
+    plt.xlabel('Harga Produk')
+    plt.ylabel('Frekuensi')
+    plt.show()
+    ```
 
-Bar Chart Jumlah Transaksi per Kota:
+7. **Diagram Venn:**
+    ```python
+    from matplotlib_venn import venn2, venn3
 
-Interpretasi Hasil
-Korelasi:
+    plt.figure(figsize=(10, 6))
+    venn2(subsets=(3, 2, 1), set_labels=('Set A', 'Set B'))
+    plt.title('Venn Diagram 2 Sets')
+    plt.show()
 
-Korelasi Pearson antara harga produk dan jumlah transaksi membantu mengidentifikasi apakah ada hubungan linear antara kedua variabel. Nilai korelasi yang signifikan menunjukkan hubungan yang kuat.
-Regresi:
+    plt.figure(figsize=(10, 6))
+    venn3(subsets=(3, 2, 1, 1, 1, 1, 1), set_labels=('Set A', 'Set B', 'Set C'))
+    plt.title('Venn Diagram 3 Sets')
+    plt.show()
+    ```
 
-Analisis regresi menunjukkan bagaimana perubahan harga produk mempengaruhi jumlah transaksi. Koefisien regresi dan nilai R-squared memberikan wawasan tentang kekuatan dan arah pengaruh.
-Kesimpulan
-Dengan analisis ini, kita dapat memahami hubungan antara harga produk dan jumlah transaksi serta pola penjualan berdasarkan kota. Informasi ini dapat digunakan untuk mengoptimalkan strategi harga dan pemasaran untuk meningkatkan penjualan.
+8. **Pie Chart untuk Transaksi per Produk:**
+    ```python
+    transaksi_per_produk = df_transaksi.groupby('ID Produk').sum()['Jumlah'].reset_index()
+    transaksi_per_produk = pd.merge(transaksi_per_produk, df_produk, on='ID Produk')
 
+    plt.figure(figsize=(8, 8))
+    transaksi_per_produk.set_index('Nama Produk')['Jumlah'].plot.pie(autopct='%1.1f%%', startangle=90)
+    plt.title('Distribusi Transaksi per Produk')
+    plt.ylabel('')
+    plt.show()
+    ```
+
+9. **Bar Chart untuk Transaksi per Kota:**
+    ```python
+    transaksi_per_kota = df_transaksi.merge(df_pelanggan, on='ID Pelanggan')
+    transaksi_per_kota = transaksi_per_kota.groupby('Kota').sum()['Jumlah'].reset_index()
+
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='Kota', y='Jumlah', data=transaksi_per_kota)
+    plt.title('Jumlah Transaksi per Kota')
+    plt.xlabel('Kota')
+    plt.ylabel('Jumlah Transaksi')
+    plt.show()
+    ```
+
+## Struktur Proyek
+- `pelanggan.csv`: Data pelanggan
+- `produk.csv`: Data produk
+- `transaksi.csv`: Data transaksi
+- `visualisasi.py`: Skrip Python untuk analisis dan visualisasi data
